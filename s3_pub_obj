@@ -24,14 +24,8 @@ obj_keys = []
 for i in objects['Contents']:
     obj_keys.append(i['Key'])
 
-print obj_keys
-# get acl of objects
-# find pub method/key in acl
-"""
+# get acl of objects and check for "AllUsers" in acl
 for key in obj_keys:
-    obj_acl = s3_client.get_object_act(Bucket=bucket,Key=key)
-    for acl in obj_acl.
-    if "AllUsers" in str(obj_acl.values())
-        print i
-"""
-# check if public
+    obj_acl = s3_client.get_object_acl(Bucket=args.bucket,Key=key)
+    if "AllUsers" in str(obj_acl.values()):
+        print key
