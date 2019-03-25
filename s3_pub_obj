@@ -15,14 +15,14 @@ args = parser.parse_args()
 
 s3_client = boto3.client('s3')
 
-# get objects from bucket
-objects = s3_client.list_objects_v2(
-    Bucket=args.bucket
-    )
+# create iterator
+paginator = s3_client.get_paginator('list_objects')
+page_iterator = paginator.paginate(Bucket=args.bucket)
 
 obj_keys = []
-for i in objects['Contents']:
-    obj_keys.append(i['Key'])
+for page in page_iterator:
+    for obj in page['Contents']:
+        obj_keys.append(obj['Key'])
 
 # get acl of objects and check for "AllUsers" in acl
 for key in obj_keys:
