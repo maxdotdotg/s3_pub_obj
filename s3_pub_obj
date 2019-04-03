@@ -7,6 +7,7 @@ return the key of that object
 
 import argparse
 import boto3
+import sys
 
 
 parser = argparse.ArgumentParser()
@@ -18,6 +19,14 @@ s3_client = boto3.client('s3')
 # create iterator
 paginator = s3_client.get_paginator('list_objects')
 page_iterator = paginator.paginate(Bucket=args.bucket)
+
+# check for bucket policy. If public, print all keys and exit
+bucket_policy = s3_client.get_bucket_policy_status(Bucket=args.bucket)
+if bucket_policy['PolicyStatus']['IsPublic']:
+    for page in page_iterator:
+        for obj in page['Contents']:
+            print obj['Key']
+    sys.exit(0)
 
 obj_keys = [obj['Key'] for page in page_iterator for obj in page['Contents']]
 
