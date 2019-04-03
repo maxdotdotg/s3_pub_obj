@@ -8,5 +8,8 @@ This script uses python 2.7 and the `boto3` library from the AWS SDK. To use thi
 2. Install pip: `python get-pip.py --user`
 3. Install dependencies: `pip install -r requirements.txt`
 
-# Usage:
+# Usage
 `./s3_pub_obj $YOUR_BUCKET`
+
+# Notes
+This script assumes appropriate access permissions to `$YOUR_BUCKET`
