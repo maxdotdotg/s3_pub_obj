@@ -25,6 +25,7 @@ page_iterator = paginator.paginate(Bucket=args.bucket)
 try:
     bucket_policy = s3_client.get_bucket_policy_status(Bucket=args.bucket)
     if bucket_policy['PolicyStatus']['IsPublic']:
+        print "PLEASE BE AWARE! BUCKET IS PUBLIC!"
         for page in page_iterator:
             for obj in page['Contents']:
                 print obj['Key']
@@ -33,10 +34,11 @@ except ClientError as e:
     if "The bucket policy does not exist" in e:
         pass
 
-obj_keys = [obj['Key'] for page in page_iterator for obj in page['Contents']]
+# check the acl to see if the object is public: "AllUsers" in the ACL
+# if so, print the object's key
+for page in page_iterator:
+    for obj in page['Contents']:
+        acl = s3_client.get_object_acl(Bucket=args.bucket,Key=obj['Key'])
+        if "AllUsers" in str(acl.values()):
+            print obj['Key']
 
-# get acl of objects and check for "AllUsers" in acl
-for key in obj_keys:
-    obj_acl = s3_client.get_object_acl(Bucket=args.bucket,Key=key)
-    if "AllUsers" in str(obj_acl.values()):
-        print key
